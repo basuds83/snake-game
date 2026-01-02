@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Snake</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="title">
+      <h1>Snake</h1>
+      <p class="hint">Arrow keys / WASD · Space to pause · R to restart</p>
+    </div>
+    <div class="stats" aria-live="polite">
+      <div><span class="label">Score</span> <span id="score">0</span></div>
+      <div><span class="label">Best</span> <span id="best">0</span></div>
+      <div><span class="label">Speed</span> <span id="speed">1x</span></div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="game">
+      <canvas id="board" width="600" height="600" aria-label="Snake game board" role="img"></canvas>
+
+      <div class="panel">
+        <button id="btnPause" class="btn" type="button" title="Pause/Resume">Pause</button>
+        <button id="btnRestart" class="btn" type="button" title="Restart">Restart</button>
+        <button id="btnShare" class="btn" type="button" title="Copy share text">Share</button>
+      </div>
+
+      <div id="overlay" class="overlay hidden" role="dialog" aria-modal="true">
+        <div class="overlay-card">
+          <h2 id="overlayTitle">Paused</h2>
+          <p id="overlayText">Press Space to resume.</p>
+          <div class="overlay-actions">
+            <button id="btnOverlayPrimary" class="btn primary" type="button">Resume</button>
+            <button id="btnOverlaySecondary" class="btn" type="button">Restart</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="touch" aria-label="Touch controls">
+        <div class="dpad">
+          <button class="dpad-btn" data-dir="up" aria-label="Up">▲</button>
+          <div class="row">
+            <button class="dpad-btn" data-dir="left" aria-label="Left">◀</button>
+            <button class="dpad-btn" data-dir="down" aria-label="Down">▼</button>
+            <button class="dpad-btn" data-dir="right" aria-label="Right">▶</button>
+          </div>
+        </div>
+        <p class="touch-hint">On phones/tablets: use the buttons or swipe.</p>
+      </div>
+    </section>
+
+    <aside class="help">
+      <h2>How to play</h2>
+      <ul>
+        <li>Eat the food to grow.</li>
+        <li>Don’t hit the walls or your own tail.</li>
+        <li>Speed increases as you score.</li>
+      </ul>
+      <h2>Sharing</h2>
+      <p>
+        The <b>Share</b> button copies a short message with your score. You can also just
+        share the folder/zip or host these files anywhere as a static site.
+      </p>
+    </aside>
+  </main>
+
+  <footer class="footer">
+    <span>Runs fully offline · No installs</span>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
