@@ -21,7 +21,7 @@
   const speedEl = document.getElementById('speed');
   const btnPause = document.getElementById('btnPause');
   const btnRestart = document.getElementById('btnRestart');
-  const btnShare = document.getElementById('btnShare');
+  const btnStart = document.getElementById('btnStart');
   const speedSlider = document.getElementById('speedSlider');
   const speedLabel = document.getElementById('speedLabel');
 
@@ -88,6 +88,7 @@
   let best = Number(localStorage.getItem('snake_best') || '0');
   let paused = false;
   let gameOver = false;
+  let hasStarted = false; // wait until user presses Start
 
   let userSpeedMult = Number(localStorage.getItem('snake_speed_mult') || '1');
   let tps = BASE_TPS;
@@ -106,6 +107,7 @@
     }
     paused = false;
     gameOver = false;
+    hasStarted = false;
     accumulator = 0;
     lastTs = 0;
 
@@ -157,7 +159,7 @@
   }
 
   function step() {
-    if (paused || gameOver) return;
+    if (!hasStarted || paused || gameOver) return;
 
     dir = pendingDir;
 
@@ -332,6 +334,17 @@
   btnPause.addEventListener('click', () => togglePause());
   btnRestart.addEventListener('click', () => reset());
 
+  // Start button: begin the game after speed is chosen
+  if (btnStart) {
+    btnStart.addEventListener('click', () => {
+      if (!hasStarted) {
+        hasStarted = true;
+        paused = false;
+        hideOverlay();
+      }
+    });
+  }
+
   btnOverlayPrimary.addEventListener('click', () => {
     if (gameOver) {
       reset();
@@ -400,35 +413,6 @@
     }
   }, { passive: true });
 
-  // Share
-  async function shareScore() {
-    const text = `I scored ${score} in Snake! 🐍 (Best: ${best})`;
-    try {
-      await navigator.clipboard.writeText(text);
-      btnShare.textContent = 'Copied!';
-      setTimeout(() => (btnShare.textContent = 'Share'), 900);
-    } catch {
-      // Fallback prompt
-      window.prompt('Copy this text:', text);
-    }
-  }
-
-  // Speed slider (0.5x - 2.0x). This is a *multiplier* on top of the game difficulty.
-  if (speedSlider) {
-    // Initialize UI
-    speedSlider.value = String(userSpeedMult);
-    if (speedLabel) speedLabel.textContent = `${Number(userSpeedMult).toFixed(1)}x`;
-
-    speedSlider.addEventListener('input', () => {
-      userSpeedMult = Number(speedSlider.value);
-      localStorage.setItem('snake_speed_mult', String(userSpeedMult));
-      // Recalculate speed immediately based on current score.
-      tps = clamp(speedForScore(score) * userSpeedMult, BASE_TPS * 0.5, MAX_TPS * 2);
-      updateHud();
-    });
-  }
-  btnShare.addEventListener('click', shareScore);
-
   // Resize
   window.addEventListener('resize', () => {
     setCanvasResolution();
@@ -437,5 +421,6 @@
   // Init
   setCanvasResolution();
   reset();
+  showOverlay('Ready?', 'Set your speed, then press Start to play.', 'Start', '');
   requestAnimationFrame(frame);
 })();

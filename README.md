@@ -33,3 +33,7 @@ Tip: If you rename the repo, the URL changes.
 ## Speed control
 - Default speed is slower for kids.
 - Use the **Speed** slider to make it faster (0.5x to 2.0x).
+
+## Start the game
+- Choose your **Speed** using the slider.
+- Press **Start** to begin playing.
