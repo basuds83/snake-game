@@ -184,3 +184,15 @@ canvas{
   color: var(--muted);
   font-size: 12px;
 }
+
+/* Mobile/touch friendliness */
+body{
+  overscroll-behavior: none;
+}
+canvas{
+  touch-action: none; /* prevent scroll/zoom gestures on the game surface */
+}
+@media (pointer: coarse){
+  .btn{ padding:12px 14px; font-size:16px; }
+  .dpad-btn{ width:64px; height:52px; font-size:20px; }
+}

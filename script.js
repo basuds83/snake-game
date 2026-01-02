@@ -52,13 +52,19 @@
   }
 
   function setCanvasResolution() {
-    // Match device pixel ratio for sharper display.
-    const cssWidth = Math.min(window.innerWidth * 0.9, 600);
+    // Match device pixel ratio for sharper display and size to the available space.
     const dpr = window.devicePixelRatio || 1;
-    canvas.style.width = cssWidth + 'px';
-    canvas.style.height = cssWidth + 'px';
-    canvas.width = Math.floor(cssWidth * dpr);
-    canvas.height = Math.floor(cssWidth * dpr);
+
+    // Prefer the canvas' current CSS width (set by CSS), fallback to viewport width.
+    const rect = canvas.getBoundingClientRect();
+    const targetCss = Math.max(280, Math.min(rect.width || (window.innerWidth * 0.9), 600));
+
+    canvas.style.width = targetCss + 'px';
+    canvas.style.height = targetCss + 'px';
+
+    canvas.width = Math.floor(targetCss * dpr);
+    canvas.height = Math.floor(targetCss * dpr);
+
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.scale(dpr, dpr);
   }
@@ -330,6 +336,11 @@
     }
   });
 
+  // tap-to-pause (helps on mobile without keyboard)
+  canvas.addEventListener('click', () => {
+    if (!gameOver) togglePause();
+  });
+
   // Touch buttons
   document.querySelectorAll('.dpad-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -348,6 +359,11 @@
     const t = e.touches[0];
     touchStart = { x: t.clientX, y: t.clientY, time: performance.now() };
   }, { passive: true });
+
+  canvas.addEventListener('touchmove', (e) => {
+    // Prevent the page from scrolling while playing.
+    e.preventDefault();
+  }, { passive: false });
 
   canvas.addEventListener('touchend', (e) => {
     if (!touchStart) return;

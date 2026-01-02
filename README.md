@@ -14,3 +14,18 @@ A small Snake game that runs fully offline in your browser.
 - The **Share** button copies a short message with your current score to your clipboard.
 
 Enjoy!
+
+## Host on GitHub Pages (free)
+1. Create a new repo on GitHub (e.g. `snake-game`).
+2. Upload these files to the repo root:
+   - `index.html`
+   - `style.css`
+   - `script.js`
+   - `README.md`
+3. Go to **Settings → Pages**.
+4. Under **Build and deployment**, choose:
+   - **Source:** Deploy from a branch
+   - **Branch:** `main` (or `master`) and `/ (root)`
+5. Save. GitHub will show your site URL (it may take a minute).
+
+Tip: If you rename the repo, the URL changes.
