@@ -196,3 +196,32 @@ canvas{
   .btn{ padding:12px 14px; font-size:16px; }
   .dpad-btn{ width:64px; height:52px; font-size:20px; }
 }
+
+/* Speed control */
+.speed-control{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 10px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,0.14);
+  background: rgba(18,26,51,0.55);
+}
+.speed-control label{
+  font-size:12px;
+  color: var(--muted);
+  font-weight:700;
+}
+.speed-control input[type="range"]{
+  width: 140px;
+}
+.speed-label{
+  min-width:44px;
+  text-align:right;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+  font-weight:700;
+}
+@media (pointer: coarse){
+  .speed-control input[type="range"]{ width: 180px; }
+}

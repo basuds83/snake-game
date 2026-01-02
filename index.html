@@ -30,6 +30,12 @@
         <button id="btnPause" class="btn" type="button" title="Pause/Resume">Pause</button>
         <button id="btnRestart" class="btn" type="button" title="Restart">Restart</button>
         <button id="btnShare" class="btn" type="button" title="Copy share text">Share</button>
+      
+        <div class="speed-control" title="Change speed">
+          <label for="speedSlider">Speed</label>
+          <input id="speedSlider" type="range" min="0.5" max="2" step="0.1" value="1" />
+          <span id="speedLabel" class="speed-label">1.0x</span>
+        </div>
       </div>
 
       <div id="overlay" class="overlay hidden" role="dialog" aria-modal="true">

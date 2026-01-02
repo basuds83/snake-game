@@ -3,9 +3,9 @@
 
   // --- Config ---
   const GRID = 24;                  // cells per side
-  const BASE_TPS = 9;               // ticks per second (base speed)
-  const SPEEDUP_EVERY = 6;          // score interval to increase speed
-  const MAX_TPS = 18;               // cap speed
+  const BASE_TPS = 6;               // ticks per second (kid-friendly base speed)
+  const SPEEDUP_EVERY = 10;          // score interval to increase speed
+  const MAX_TPS = 16;               // cap speed
   const START_LEN = 4;
 
   // --- DOM ---
@@ -22,6 +22,8 @@
   const btnPause = document.getElementById('btnPause');
   const btnRestart = document.getElementById('btnRestart');
   const btnShare = document.getElementById('btnShare');
+  const speedSlider = document.getElementById('speedSlider');
+  const speedLabel = document.getElementById('speedLabel');
 
   const overlay = document.getElementById('overlay');
   const overlayTitle = document.getElementById('overlayTitle');
@@ -87,6 +89,7 @@
   let paused = false;
   let gameOver = false;
 
+  let userSpeedMult = Number(localStorage.getItem('snake_speed_mult') || '1');
   let tps = BASE_TPS;
   let accumulator = 0;
   let lastTs = 0;
@@ -95,7 +98,12 @@
 
   function reset() {
     score = 0;
+    // Keep the user's chosen multiplier, but reset base difficulty.
     tps = BASE_TPS;
+    if (speedSlider) {
+      speedSlider.value = String(userSpeedMult);
+      if (speedLabel) speedLabel.textContent = `${Number(userSpeedMult).toFixed(1)}x`;
+    }
     paused = false;
     gameOver = false;
     accumulator = 0;
@@ -175,7 +183,7 @@
     // Eat
     if (eq(next, food)) {
       score += 1;
-      tps = speedForScore(score);
+      tps = clamp(speedForScore(score) * userSpeedMult, BASE_TPS * 0.5, MAX_TPS * 2);
       if (score > best) {
         best = score;
         localStorage.setItem('snake_best', String(best));
@@ -403,6 +411,21 @@
       // Fallback prompt
       window.prompt('Copy this text:', text);
     }
+  }
+
+  // Speed slider (0.5x - 2.0x). This is a *multiplier* on top of the game difficulty.
+  if (speedSlider) {
+    // Initialize UI
+    speedSlider.value = String(userSpeedMult);
+    if (speedLabel) speedLabel.textContent = `${Number(userSpeedMult).toFixed(1)}x`;
+
+    speedSlider.addEventListener('input', () => {
+      userSpeedMult = Number(speedSlider.value);
+      localStorage.setItem('snake_speed_mult', String(userSpeedMult));
+      // Recalculate speed immediately based on current score.
+      tps = clamp(speedForScore(score) * userSpeedMult, BASE_TPS * 0.5, MAX_TPS * 2);
+      updateHud();
+    });
   }
   btnShare.addEventListener('click', shareScore);
 
