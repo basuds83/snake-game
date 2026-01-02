@@ -11,6 +11,11 @@
   // --- DOM ---
   const canvas = document.getElementById('board');
   const ctx = canvas.getContext('2d');
+  let dprNow = window.devicePixelRatio || 1;
+  function logicalSize(){
+    // After scaling the context, coordinates are in CSS pixels.
+    return { w: canvas.width / dprNow, h: canvas.height / dprNow };
+  }
   const scoreEl = document.getElementById('score');
   const bestEl = document.getElementById('best');
   const speedEl = document.getElementById('speed');
@@ -31,12 +36,14 @@
     Math.floor(Math.random() * (maxInclusive - min + 1)) + min;
 
   function cellSize() {
-    // Use the canvas internal size for crisp rendering.
-    return Math.floor(canvas.width / GRID);
+    // Use logical (CSS pixel) size so DPR scaling doesn't break math.
+    const { w } = logicalSize();
+    return Math.floor(w / GRID);
   }
 
   function clear() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const { w, h } = logicalSize();
+    ctx.clearRect(0, 0, w, h);
   }
 
   function drawRoundedRect(x, y, w, h, r) {
@@ -52,21 +59,22 @@
   }
 
   function setCanvasResolution() {
-    // Match device pixel ratio for sharper display and size to the available space.
-    const dpr = window.devicePixelRatio || 1;
+    // Size canvas in CSS pixels, but render sharply with DPR.
+    dprNow = window.devicePixelRatio || 1;
 
-    // Prefer the canvas' current CSS width (set by CSS), fallback to viewport width.
+    // Canvas is styled by CSS to a square; read its current CSS width.
+    // If it's 0 (rare during initial layout), fall back to viewport.
     const rect = canvas.getBoundingClientRect();
-    const targetCss = Math.max(280, Math.min(rect.width || (window.innerWidth * 0.9), 600));
+    const css = Math.max(280, Math.min((rect.width || (window.innerWidth * 0.9)), 600));
 
-    canvas.style.width = targetCss + 'px';
-    canvas.style.height = targetCss + 'px';
+    canvas.style.width = css + 'px';
+    canvas.style.height = css + 'px';
 
-    canvas.width = Math.floor(targetCss * dpr);
-    canvas.height = Math.floor(targetCss * dpr);
+    canvas.width = Math.floor(css * dprNow);
+    canvas.height = Math.floor(css * dprNow);
 
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
-    ctx.scale(dpr, dpr);
+    // Reset transform, then scale so we can draw in CSS pixel units.
+    ctx.setTransform(dprNow, 0, 0, dprNow, 0, 0);
   }
 
   // --- Game state ---
@@ -191,8 +199,7 @@
     clear();
 
     const cs = cellSize();
-    const w = GRID * cs;
-    const h = GRID * cs;
+    const { w, h } = logicalSize();
 
     // Board background gradient
     const g = ctx.createLinearGradient(0, 0, w, h);
